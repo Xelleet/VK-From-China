@@ -17,3 +17,10 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=10000)
     #likes
+
+class Friend(models.Model):
+    from_user = models.ForeignKey(UserProfile, related_name='friends_from',on_delete=models.CASCADE)
+    to_user = models.ForeignKey(UserProfile, related_name='friends_to',on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('from_user', 'to_user')  # Prevent duplicate friend requests

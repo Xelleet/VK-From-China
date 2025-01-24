@@ -3,15 +3,15 @@ import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, logout, login
-from .models import User, Post, Comment, UserProfile
+from .models import User, Post, Comment, UserProfile, Friend
 from .forms import RegisterForm, LoginForm, PostForm, CommentForm
 
 @login_required
 def index(request):
-    return render(request, 'index.html', {'user': request.user})
+    return render(request, 'index.html', {'user': request.user, 'friends': Friend.objects.filter(to_user_id=request.user.id)})
 
-def user_profile(request, index):
-    return render(request, 'profilePage.html', {'user': UserProfile.objects.get(user_id=index), 'posts': Post.objects.filter(user=UserProfile.objects.get(user_id=index))})
+def userprofile(request, index):
+    return render(request, 'profilePage.html', {'user': UserProfile.objects.get(user_id=index), 'posts': Post.objects.filter(user=UserProfile.objects.get(user_id=index)), 'currentUser': request.user})
 
 def add_post(request, index):
     if request.method == 'POST':
@@ -19,10 +19,11 @@ def add_post(request, index):
         if form.is_valid():
             post = form.save(commit=False)
             post.user = UserProfile(id=index)
-            post.publication_date = str(datetime.datetime)
+            post.publication_date = str(datetime.time)
             post.save()
 
-            return render(request, 'profilePage.html', {'user': UserProfile.objects.get(user_id=index), 'posts': Post.objects.filter(user=UserProfile.objects.get(user_id=index))})
+            return redirect('userprofile', index)
+            #return render(request, 'profilePage.html', {'user': UserProfile.objects.get(user_id=index), 'posts': Post.objects.filter(user=UserProfile.objects.get(user_id=index))})
     else:
         form = PostForm()
 
@@ -33,7 +34,13 @@ def delete_post(request, index):
     user_id = post.user.id
     post.delete()
 
-    return render(request, 'profilePage.html', {'user': UserProfile.objects.get(user_id=user_id), 'posts': Post.objects.filter(user=UserProfile.objects.get(user_id=user_id))})
+    return redirect('userprofile', user_id)
+
+def add_friend(request, index):
+    friend = Friend(from_user=UserProfile.objects.get(user=request.user), to_user=UserProfile.objects.get(id=index))
+    friend.save()
+    return redirect('userprofile', index)
+
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)

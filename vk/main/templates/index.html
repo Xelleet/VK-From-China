@@ -7,6 +7,13 @@
 <body>
     <div class="main-container">
         <h1 class="Welcome-text">Welcome, {{user}},  to VK (Not from China, promise 😇😇😇)</h1>
+        <ul>
+            {% for item in friends %}
+                <li>
+                    <p>{{item.from_user.user.username}}</p>
+                </li>
+            {% endfor %}
+        </ul>
         <div class="news">
             <!-- Здесь мы долбанем в общем большую ленту новостей, пока что это будут простые посты разных людей-->
         </div>

@@ -7,6 +7,9 @@
 <body>
     <div class="main-container">
         <h1>{{user.user.username}} page</h1>
+        {% if currentUser != user.user %}
+            <button><a href="{% url 'add_friend' user.id %}">Add friend {{user.id}}</a></button>
+        {% endif %}
         <div class="posts">
             {% for item in posts %}
                 <div class="post">
