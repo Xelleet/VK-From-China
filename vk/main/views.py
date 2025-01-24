@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, logout, login
-from .models import User, Post, Comment
+from .models import User, Post, Comment, UserProfile
 from .forms import RegisterForm, LoginForm, PostForm, CommentForm
 
 @login_required
 def index(request):
     return render(request, 'index.html', {'user': request.user})
+
+def user_profile(request, index):
+    return render(request, 'profilePage.html', {'user', UserProfile.objects.get(id=index)})
 
 def register(request):
     if request.method == 'POST':
@@ -15,6 +18,9 @@ def register(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])  # Hash the password
             user.save()
+
+            userProfile = UserProfile(user=user)
+            userProfile.save()
             login(request, user)  # Log in the new user
             return redirect('index')
     else:
