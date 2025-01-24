@@ -1,15 +1,15 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from . import models
+from .models import Post, Comment, User
 
 class PostForm(forms.ModelForm):
     class Meta:
-        model = models.Post
+        model = Post
         fields = ['title', 'content']
 
 class CommentForm(forms.ModelForm):
     class Meta:
-        model = models.Comment
+        model = Comment
         fields = ['content']
 
 class RegisterForm(forms.ModelForm):
@@ -17,7 +17,7 @@ class RegisterForm(forms.ModelForm):
     confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
 
     class Meta:
-        model = models.User
+        model = User
         fields = ['username', 'email', 'password']
 
     def clean(self):
