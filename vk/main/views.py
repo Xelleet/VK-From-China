@@ -8,7 +8,7 @@ from .forms import RegisterForm, LoginForm, PostForm, CommentForm
 
 @login_required
 def index(request):
-    return render(request, 'index.html', {'user': request.user, 'friends': Friend.objects.filter(to_user_id=request.user.id)})
+    return render(request, 'index.html', {'user': request.user, 'friends': Friend.objects.filter(from_user_id=request.user.id)})
 
 def userprofile(request, index):
     return render(request, 'profilePage.html', {'user': UserProfile.objects.get(user_id=index), 'posts': Post.objects.filter(user=UserProfile.objects.get(user_id=index)), 'currentUser': request.user})
@@ -37,8 +37,15 @@ def delete_post(request, index):
     return redirect('userprofile', user_id)
 
 def add_friend(request, index):
-    friend = Friend(from_user=UserProfile.objects.get(user=request.user), to_user=UserProfile.objects.get(id=index))
-    friend.save()
+    from_user = UserProfile.objects.get(user=request.user)  # Текущий пользователь
+    to_user = UserProfile.objects.get(id=index)  # Пользователь, которого добавляют
+
+    if not Friend.objects.filter(from_user=from_user, to_user=to_user).exists():
+        Friend.objects.create(from_user=from_user, to_user=to_user)
+
+    if not Friend.objects.filter(from_user=to_user, to_user=from_user).exists():
+        Friend.objects.create(from_user=to_user, to_user=from_user)
+
     return redirect('userprofile', index)
 
 def register(request):
