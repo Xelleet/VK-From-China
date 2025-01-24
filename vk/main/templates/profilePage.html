@@ -6,11 +6,19 @@
 </head>
 <body>
     <div class="main-container">
-        <h1>{{}} page</h1>
+        <h1>{{user.user.username}} page</h1>
         <div class="posts">
-            <!-- Здесь будут все наши посты так сказать -->
+            {% for item in posts %}
+                <div class="post">
+                    <h1>{{item.title}}</h1>
+                    <h2>{{item.content}}</h2>
+                    <h3>{{item.publication_date}}</h3>
+                    <a href="{% url 'delete_post' item.id %}">Delete</a>
+                </div>
+            {% endfor %}
+            <a href="{% url 'add_post' user.id %}">Add post</a>
         </div>
-        <div class="frinds">
+        <div class="friends">
             <!-- Здесь будут все наши друзья -->
         </div>
     </div>

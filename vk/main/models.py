@@ -6,9 +6,10 @@ class UserProfile(models.Model):
     #profile_picture = models.ImageField(upload_to='templates/media')
 
 class Post(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     content = models.CharField(max_length=100)
-    publication_date = models.DateField()
+    publication_date = models.CharField(max_length=100)
     #likes
 
 class Comment(models.Model):
